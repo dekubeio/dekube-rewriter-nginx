@@ -2,7 +2,7 @@
 
 import re
 
-from h2c import IngressRewriter, get_ingress_class, resolve_backend
+from h2c import IngressRewriter, get_ingress_class, resolve_backend  # pylint: disable=import-error  # h2c resolves at runtime
 
 
 def _extract_strip_prefix_nginx(annotations, path):
@@ -20,6 +20,7 @@ class NginxRewriter(IngressRewriter):
     name = "nginx"
 
     def match(self, manifest, ctx):
+        """Return True if manifest uses nginx ingress class or annotations."""
         ingress_types = ctx.config.get("ingress_types") or {}
         cls = get_ingress_class(manifest, ingress_types)
         if cls == "nginx":
@@ -28,6 +29,7 @@ class NginxRewriter(IngressRewriter):
         return any(k.startswith("nginx.ingress.kubernetes.io/") for k in annotations)
 
     def rewrite(self, manifest, ctx):
+        """Rewrite nginx ingress manifest to Caddy entries."""
         entries = []
         annotations = manifest.get("metadata", {}).get("annotations") or {}
         spec = manifest.get("spec") or {}

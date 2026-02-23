@@ -43,6 +43,21 @@ Or manually:
 cp nginx_rewriter.py /path/to/extensions-dir/
 ```
 
+## Code quality
+
+*Last updated: 2026-02-23*
+
+| Metric | Value |
+|--------|-------|
+| Pylint | 9.66/10 |
+| Pyflakes | clean |
+| Radon MI | 55.88 (A) |
+| Radon avg CC | 10.0 (B) |
+
+Worst CC: `NginxRewriter.rewrite` (18, C).
+
+The `E0401: Unable to import 'h2c'` is expected — extensions import from h2c-core at runtime, not at lint time.
+
 ## Dependencies
 
 None (stdlib only).
