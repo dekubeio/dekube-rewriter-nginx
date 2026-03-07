@@ -12,16 +12,16 @@ Excluded from the core because nginx-ingress is deprecated. Still here, because 
 
 ## Handled annotations
 
-| Annotation | Caddy equivalent |
-|------------|-----------------|
-| `nginx.ingress.kubernetes.io/rewrite-target: /$1` | `uri strip_prefix` |
-| `nginx.ingress.kubernetes.io/backend-protocol: HTTPS` | `reverse_proxy https://...` |
-| `nginx.ingress.kubernetes.io/enable-cors: "true"` | `header Access-Control-Allow-*` |
-| `nginx.ingress.kubernetes.io/cors-allow-origin` | `header Access-Control-Allow-Origin` |
-| `nginx.ingress.kubernetes.io/cors-allow-methods` | `header Access-Control-Allow-Methods` |
-| `nginx.ingress.kubernetes.io/cors-allow-headers` | `header Access-Control-Allow-Headers` |
-| `nginx.ingress.kubernetes.io/proxy-body-size` | `request_body max_size` |
-| `nginx.ingress.kubernetes.io/configuration-snippet` | Partial: `more_set_headers` directives extracted as `header` |
+| Annotation | Entry field |
+|------------|-------------|
+| `nginx.ingress.kubernetes.io/rewrite-target: /$1` | `strip_prefix` |
+| `nginx.ingress.kubernetes.io/backend-protocol: HTTPS` | `scheme: https` |
+| `nginx.ingress.kubernetes.io/enable-cors: "true"` | `response_headers` (CORS headers) |
+| `nginx.ingress.kubernetes.io/cors-allow-origin` | `response_headers["Access-Control-Allow-Origin"]` |
+| `nginx.ingress.kubernetes.io/cors-allow-methods` | `response_headers["Access-Control-Allow-Methods"]` |
+| `nginx.ingress.kubernetes.io/cors-allow-headers` | `response_headers["Access-Control-Allow-Headers"]` |
+| `nginx.ingress.kubernetes.io/proxy-body-size` | `max_body_size` |
+| `nginx.ingress.kubernetes.io/configuration-snippet` | Partial: `more_set_headers` extracted to `response_headers` |
 
 ## Matching
 
@@ -44,14 +44,14 @@ cp nginx_rewriter.py /path/to/extensions-dir/
 
 ## Code quality
 
-*Last updated: 2026-02-23*
+*Last updated: 2026-03-07*
 
 | Metric | Value |
 |--------|-------|
-| Pylint | 9.66/10 |
+| Pylint | 9.64/10 |
 | Pyflakes | clean |
-| Radon MI | 55.88 (A) |
-| Radon avg CC | 10.0 (B) |
+| Radon MI | 56.40 (A) |
+| Radon avg CC | 15.5 (C) |
 
 Worst CC: `NginxRewriter.rewrite` (18, C).
 
