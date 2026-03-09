@@ -43,9 +43,9 @@ class NginxRewriter(IngressRewriter):
                 backend = resolve_backend(path_entry, manifest, ctx)
 
                 # Backend protocol annotation
-                backend_ssl = annotations.get(
+                backend_ssl = str(annotations.get(
                     "nginx.ingress.kubernetes.io/backend-protocol", ""
-                ).upper() == "HTTPS"
+                )).upper() == "HTTPS"
                 scheme = "https" if backend_ssl else "http"
 
                 strip_prefix = _extract_strip_prefix_nginx(annotations, path)
@@ -62,8 +62,8 @@ class NginxRewriter(IngressRewriter):
                 response_headers = {}
 
                 # CORS
-                cors_enabled = annotations.get(
-                    "nginx.ingress.kubernetes.io/enable-cors", "").lower()
+                cors_enabled = str(annotations.get(
+                    "nginx.ingress.kubernetes.io/enable-cors", "")).lower()
                 if cors_enabled == "true":
                     response_headers["Access-Control-Allow-Origin"] = annotations.get(
                         "nginx.ingress.kubernetes.io/cors-allow-origin", "*")
