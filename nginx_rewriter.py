@@ -25,13 +25,13 @@ class NginxRewriter(IngressRewriter):
         cls = get_ingress_class(manifest, ingress_types)
         if cls == "nginx":
             return True
-        annotations = manifest.get("metadata", {}).get("annotations") or {}
+        annotations = (manifest.get("metadata") or {}).get("annotations") or {}
         return any(k.startswith("nginx.ingress.kubernetes.io/") for k in annotations)
 
     def rewrite(self, manifest, ctx):
         """Rewrite nginx ingress manifest to structured ingress entries."""
         entries = []
-        annotations = manifest.get("metadata", {}).get("annotations") or {}
+        annotations = (manifest.get("metadata") or {}).get("annotations") or {}
         spec = manifest.get("spec") or {}
 
         for rule in spec.get("rules") or []:
