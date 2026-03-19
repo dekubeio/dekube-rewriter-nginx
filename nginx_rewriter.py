@@ -5,16 +5,6 @@ import re
 from dekube import IngressRewriter, get_ingress_class, resolve_backend  # pylint: disable=import-error  # h2c resolves at runtime
 
 
-def _extract_strip_prefix_nginx(annotations, path):
-    """Extract strip prefix from nginx rewrite-target annotation."""
-    rewrite = annotations.get("nginx.ingress.kubernetes.io/rewrite-target", "")
-    if rewrite in ("/$1", r"/\1"):
-        prefix = re.sub(r'\(\.?\*\)$', '', path)
-        if prefix and prefix != "/":
-            return prefix.rstrip("/")
-    return None
-
-
 class NginxRewriter(IngressRewriter):
     """Rewrite nginx ingress annotations to structured ingress entries."""
     name = "nginx"
@@ -48,7 +38,7 @@ class NginxRewriter(IngressRewriter):
                 )).upper() == "HTTPS"
                 scheme = "https" if backend_ssl else "http"
 
-                strip_prefix = _extract_strip_prefix_nginx(annotations, path)
+                strip_prefix = self._extract_strip_prefix_nginx(annotations, path)
 
                 entry = {
                     "host": host,
@@ -101,3 +91,13 @@ class NginxRewriter(IngressRewriter):
                 entries.append(entry)
 
         return entries
+
+    @staticmethod
+    def _extract_strip_prefix_nginx(annotations, path):
+        """Extract strip prefix from nginx rewrite-target annotation."""
+        rewrite = annotations.get("nginx.ingress.kubernetes.io/rewrite-target", "")
+        if rewrite in ("/$1", r"/\1"):
+            prefix = re.sub(r'\(\.?\*\)$', '', path)
+            if prefix and prefix != "/":
+                return prefix.rstrip("/")
+        return None
